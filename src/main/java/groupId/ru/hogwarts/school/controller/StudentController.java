@@ -36,16 +36,12 @@ return ResponseEntity.ok(student); //ок - ок вызвать студента
 
     }
 
-
-    public ResponseEntity<Student> editStudent(@PathVariable long id,@RequestBody Student student) {
-Student studentEdit=studentService.editStudent(id, student);
-if (studentEdit == null) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); //build - строить
-}
-return ResponseEntity.ok(studentEdit);
+@PutMapping("{id}")
+    public void  editStudent(@RequestBody Student student) {
+studentService.editStudent(student);
 
     }
-
+@DeleteMapping("{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable long id) {
 studentService.deleteStudent(id);
 return ResponseEntity.ok().build();
