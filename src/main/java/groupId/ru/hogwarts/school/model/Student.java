@@ -1,30 +1,41 @@
 package groupId.ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import org.hibernate.mapping.List;
 
 import java.util.Objects;
+
 @Entity
 public class Student {
 
-   @Id
-   @GeneratedValue
-   private Long id;
-    private  String name;
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
     private int age;
+    @ManyToOne
+    @JsonIgnore
+    private Faculty faculty;
 
     public Student() {
-
     }
 
-public Student(Long id, String name, int age) {
-    this.id = id;
-    this.name = name;
-    this.age = age;
-}
+    public Student(Long id, String name, int age, Faculty faculty) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.faculty = new Faculty();
+    }
 
 
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
 
     public Long getId() {
         return id;
@@ -50,17 +61,18 @@ public Student(Long id, String name, int age) {
         this.age = age;
     }
 
-@Override
+    @Override
     public String toString() {
-    return "Student [id=" + id + ", name=" + name + ", age=" + age + "]";
+        return "Student [id=" + id + ", name=" + name + ", age=" + age + "]";
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, name, age);
     }
+
     @Override
     public boolean equals(Object obj) {
-    return Objects.equals(id, ((Student) obj).id);
+        return Objects.equals(id, ((Student) obj).id);
     }
 }

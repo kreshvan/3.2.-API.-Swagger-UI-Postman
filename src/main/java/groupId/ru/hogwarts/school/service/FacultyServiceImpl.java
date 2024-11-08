@@ -1,20 +1,24 @@
 package groupId.ru.hogwarts.school.service;
 
+import groupId.ru.hogwarts.school.controller.StudentRepository;
 import groupId.ru.hogwarts.school.model.Faculty;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import groupId.ru.hogwarts.school.model.Student;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
-import repository.FacultyRepository;
+import groupId.ru.hogwarts.school.controller.FacultyRepository;
+
+import java.util.List;
 
 @Service
 
 public class FacultyServiceImpl implements FacultyService {
 
+    private final StudentRepository studentRepository;
 
     private final FacultyRepository facultyRepository;
 
-    public FacultyServiceImpl(FacultyRepository facultyRepository) {
+    public FacultyServiceImpl(StudentRepository studentRepository, FacultyRepository facultyRepository) {
+        this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
     }
 
@@ -25,7 +29,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty findFaculty(long id) {
-        return facultyRepository.findById(id).orElseThrow(()->new NotFoundException(Faculty.class.getName()));
+        return facultyRepository.findById(id).orElseThrow(() -> new NotFoundException(Faculty.class.getName()));
     }
 
     @Override
@@ -39,6 +43,23 @@ public class FacultyServiceImpl implements FacultyService {
         Faculty faculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Faculty not found"));
         facultyRepository.deleteById(faculty.getId());
+    }
+
+    @Override
+    public List<Faculty> findFacultyByNameOrColorIgnoreCase(String name, String color) {
+        return facultyRepository.findFacultyByNameOrColorIgnoreCase(name, color);
+    }
+
+
+    @Override
+    public Faculty findFacultyByStudentId(long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Student.class,id));
+        Faculty faculty = student.getFaculty();
+        if (faculty == null) {
+            throw new NotFoundException(Faculty.class);
+        }
+        return faculty;
     }
 
 
